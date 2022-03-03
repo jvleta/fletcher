@@ -11,22 +11,33 @@ int main(int argc, char *argv[]) {
   namespace po = boost::program_options;
 
   try {
-    po::options_description desc("Allowed options");
-    desc.add_options()("help", "produce help message")(
-        "input", po::value<std::string>(), "set name of input file");
+    po::options_description options("Allowed options");
+
+    options.add_options()("help,h", "produce help message")(
+        "input,i", po::value<std::string>(), "set input filename")(
+        "output,o", po::value<std::string>(), "set output filename");
+
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::store(po::parse_command_line(argc, argv, options), vm);
     po::notify(vm);
+    
     if (vm.count("help")) {
-      cout << desc << "\n";
+      cout << options << "\n";
       return 0;
     }
+    
     if (vm.count("input")) {
-      cout << "input was set to " << vm["input"].as<std::string>()
-           << ".\n";
+      cout << "input filename was set to " << vm["input"].as<std::string>() << ".\n";
     } else {
-      cout << "inputfile was not set.\n";
+      cout << "input filename was not set.\n";
     }
+
+    if (vm.count("output")) {
+      cout << "output filename was set to " << vm["output"].as<std::string>() << ".\n";
+    } else {
+      cout << "output filename was not set.\n";
+    }
+
   } catch (exception &e) {
     cerr << "error: " << e.what() << "\n";
     return 1;
